@@ -4,8 +4,14 @@
 
  if($cmd==="convert") {
   $plaatje = basename("$scadfile", ".scad").".png";
-  $cmd = getcwd()."/openscad -o './tmp/$plaatje' './library/$scadfile'";
-  exec($cmd);
+
+  // Genereer opnieuw indien plaatje verourderd is of nog niet bestaat
+  $openscadtijd = filemtime("./library/$scadfile");
+  $aanmaaktijd = filemtime("./tmp/$plaatje");
+  if( $aanmaaktijd===false || $openscadtijd>$aanmaaktijd) {
+   $cmd = getcwd()."/openscad -o './tmp/$plaatje' './library/$scadfile'";
+   exec($cmd);
+  }
 
   echo "<img src='tmp/$plaatje' />";
  }
@@ -14,5 +20,10 @@
  }
  else if($cmd==="nemo") {
   exec("nemo '$scadfile'");
+ }
+ else if($cmd==="use") {
+  $plaatje = basename("$scadfile", ".scad").".png";
+  $use = "use <".getcwd()."/$scadfile>;";
+  echo $use;
  }
 ?>
